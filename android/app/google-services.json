@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "17706574132",
+    "project_id": "flutter-todo-d1b26",
+    "storage_bucket": "flutter-todo-d1b26.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:17706574132:android:66b12a280bd17887e00561",
+        "android_client_info": {
+          "package_name": "com.lyfesan.beyond_todo_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCLa6hANEsCfuYUjbP-oKcTk640ORAErbQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:17706574132:android:3f06fd86250333dce00561",
+        "android_client_info": {
+          "package_name": "com.lyfesan.flutter_firebase"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCLa6hANEsCfuYUjbP-oKcTk640ORAErbQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
