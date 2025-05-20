@@ -1,19 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/user.dart';
+import '../models/app_user.dart';
 import '../models/task.dart';
 
 class FirestoreRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // USERS
-  Future<void> createUser(User user) async {
+  Future<void> createUser(AppUser user) async {
     await _firestore.collection('users').doc(user.uid).set(user.toMap());
   }
 
-  Future<User?> getUser(String uid) async {
+  Future<AppUser?> getUser(String uid) async {
     final doc = await _firestore.collection('users').doc(uid).get();
     if (doc.exists) {
-      return User.fromDocument(doc);
+      return AppUser.fromDocument(doc);
     }
     return null;
   }

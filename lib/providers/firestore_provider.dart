@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../data/models/app_user.dart';
 import '../data/repository/firestore_repository.dart';
 import '../data/models/task.dart';
 import 'auth_provider.dart'; // Import to access authStateProvider
@@ -17,4 +18,8 @@ final userTasksProvider = StreamProvider<List<Task>>((ref) {
 
   final repository = ref.watch(firestoreRepositoryProvider);
   return repository.getUserTasks(user.uid);
+});
+
+final userProvider = FutureProvider.family<AppUser?, String>((ref, uid) {
+  return ref.read(firestoreRepositoryProvider).getUser(uid);
 });

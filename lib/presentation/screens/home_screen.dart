@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../providers/auth_provider.dart';
 import '../../providers/firestore_provider.dart';
 import '../../data/models/task.dart';
+import '../../data/models/app_user.dart';
 import 'task_dialog.dart';
+import 'package:intl/intl.dart'; // Import intl package
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -17,9 +20,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final tasksAsync = ref.watch(userTasksProvider);
+    final userAsync = ref.watch(authStateProvider);
+    final firestoreProvider = ref.watch(firestoreRepositoryProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Todo List')),
+      appBar: AppBar(
+        title: Image.asset(
+          'assets/beyond_todo_logo.png',
+          height: 30,
+        ),
+        centerTitle: true,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: IconButton(
+              icon: Icon(Icons.logout_rounded),
+              onPressed: () => ref.read(authRepositoryProvider).signOut(),
+
+            ),
+          ),
+        ],
+      ),
       body: tasksAsync.when(
         data: (tasks) {
           final ongoing = tasks.where((t) => !t.isDone).toList();
@@ -34,23 +55,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             itemCount: shownTasks.length,
             itemBuilder: (_, i) {
               final task = shownTasks[i];
-              return ListTile(
-                title: Text(task.title),
-                subtitle: task.dueDate != null
-                    ? Text('Due: ${task.dueDate!.toLocal()}')
-                    : null,
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.edit),
-                      onPressed: () => _showTaskDialog(task: task),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: () => _deleteTask(task),
-                    ),
-                  ],
+              return InkWell(
+                onTap: () => _showTaskDialog(task: task),
+                child: ListTile(
+                  title: Text(task.title),
+                  subtitle: task.dueDate != null
+                      ? Text(
+                      'Due: ${DateFormat('EEE, d MMM, HH:mm').format(task.dueDate!.toLocal())}')
+                      : null,
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.red),
+                    onPressed: () => _deleteTask(task),
+                  ),
                 ),
               );
             },
@@ -66,13 +82,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (i) => setState(() => _currentIndex = i),
-        items: const [
+        selectedItemColor: Theme.of(context).colorScheme.onPrimaryContainer,
+        unselectedItemColor: Colors.grey,
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.radio_button_unchecked),
+            icon: Icon(Icons.adjust_rounded,
+                color: _currentIndex == 0
+                    ? Theme.of(context).colorScheme.primary
+                    : Colors.grey),
             label: 'Ongoing',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.check_circle),
+            icon: Icon(Icons.task_alt_rounded,
+                color: _currentIndex == 1
+                    ? Theme.of(context).colorScheme.primary
+                    : Colors.grey),
             label: 'Completed',
           ),
         ],

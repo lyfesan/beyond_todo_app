@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../data/models/app_user.dart';
+import '../../providers/auth_provider.dart';
+import '../../providers/firestore_provider.dart';
+
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
 
@@ -24,6 +28,40 @@ class RegisterScreenState extends ConsumerState<RegisterScreen> {
     super.dispose();
   }
 
+  void _showSnackBarError({String? message, Object? e}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('$message : ${e.toString()}'),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  void _register() async {
+    if (_registerFormKey.currentState!.validate()) {
+      final name = _usernameController.text.trim();
+      final email = _emailController.text.trim();
+      final password = _passwordController.text.trim();
+
+      try {
+        var result = await ref.read(authRepositoryProvider).createUserWithEmailAndPassword(email, password);
+        /*
+        if(result != null) {
+          AppUser newUser = AppUser(
+            uid:
+          );
+          ref.read(firestoreRepositoryProvider).createUser();
+        }*/
+        // and AuthGate will navigate to HomeScreen.
+      } catch (e) {
+        // Handle login errors (show a SnackBar, dialog, or update UI)
+        _showSnackBarError(message: "Login failed", e: e);
+        _emailController.clear();
+        _passwordController.clear();
+        //print("Login failed: $e");
+      }
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -192,7 +230,7 @@ class RegisterScreenState extends ConsumerState<RegisterScreen> {
                       child: SizedBox(
                         width: MediaQuery.of(context).size.width * 0.7,
                         child: ElevatedButton(
-                          onPressed: (){}, //TODO: Implement register action
+                          onPressed: () => _register, //TODO: Implement register action
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Theme.of(context).colorScheme.primaryContainer,
                             shape: RoundedRectangleBorder(

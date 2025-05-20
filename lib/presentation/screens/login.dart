@@ -183,7 +183,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
                       child: SizedBox(
                         width: MediaQuery.of(context).size.width * 0.7,
                         child: ElevatedButton(
-                          onPressed: _login,  //TODO: Implement login action
+                          onPressed: _login,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Theme.of(context).colorScheme.primaryContainer,
                             shape: RoundedRectangleBorder(
@@ -203,7 +203,6 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                       ),
                     ),
-
                   ]
               ),
             ),
@@ -212,5 +211,4 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
       ),
     );
   }
-
 }
