@@ -41,6 +41,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
         await ref.read(authRepositoryProvider).signInWithEmailAndPassword(email, password);
         // On successful login, authStateProvider will emit the user,
         // and AuthGate will navigate to HomeScreen.
+        Navigator.pushReplacementNamed(context, '/');
       } catch (e) {
         // Handle login errors (show a SnackBar, dialog, or update UI)
         _showSnackBarError(message: "Login failed", e: e);

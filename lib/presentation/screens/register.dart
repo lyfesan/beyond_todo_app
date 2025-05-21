@@ -2,7 +2,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import '../../data/models/app_user.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/firestore_provider.dart';
@@ -17,7 +16,6 @@ class RegisterScreen extends ConsumerStatefulWidget {
 
 class RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _registerFormKey = GlobalKey<FormState>();
-  final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -39,7 +37,6 @@ class RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   void _register() async {
     if (_registerFormKey.currentState!.validate()) {
-      final name = _usernameController.text.trim();
       final email = _emailController.text.trim();
       final password = _passwordController.text.trim();
 
@@ -53,9 +50,10 @@ class RegisterScreenState extends ConsumerState<RegisterScreen> {
           ref.read(firestoreRepositoryProvider).createUser();
         }*/
         // and AuthGate will navigate to HomeScreen.
+        Navigator.pushReplacementNamed(context, '/');
       } catch (e) {
         // Handle login errors (show a SnackBar, dialog, or update UI)
-        _showSnackBarError(message: "Login failed", e: e);
+        _showSnackBarError(message: "Register failed", e: e);
         _emailController.clear();
         _passwordController.clear();
         //print("Login failed: $e");
@@ -66,7 +64,7 @@ class RegisterScreenState extends ConsumerState<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Padding(
+        child: Padding( 
           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 32),
           child: SingleChildScrollView(
             child: Form(
@@ -89,42 +87,6 @@ class RegisterScreenState extends ConsumerState<RegisterScreen> {
                           fontSize: 32,
                           fontWeight: FontWeight.w400,
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                    TextFormField(
-                      controller: _usernameController,
-                      keyboardType: TextInputType.name,
-                      decoration: InputDecoration(
-                        label: Text('User Name'),
-                        hintText: 'Enter your name',
-                        filled: true,
-                        fillColor: Colors.grey[100],
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.primary,
-                            width: 2.5,
-                          ),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.6),
-                            width: 2,
-                          ),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.primary,
-                            width: 2,
-                          ),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      cursorColor: Theme.of(context).colorScheme.primary,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 32),
@@ -230,7 +192,7 @@ class RegisterScreenState extends ConsumerState<RegisterScreen> {
                       child: SizedBox(
                         width: MediaQuery.of(context).size.width * 0.7,
                         child: ElevatedButton(
-                          onPressed: () => _register, //TODO: Implement register action
+                          onPressed: _register,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Theme.of(context).colorScheme.primaryContainer,
                             shape: RoundedRectangleBorder(

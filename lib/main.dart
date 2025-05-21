@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:beyond_todo_app/presentation/screens/login.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'app/services/notification_service.dart';
 import 'app/themes/app_theme.dart';
 import 'firebase_options.dart';
 
@@ -13,6 +14,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await NotificationService.initializeNotification();
   runApp(ProviderScope(child: MyApp()));
 }
 
@@ -26,9 +28,8 @@ class MyApp extends ConsumerWidget {
       title: 'Beyond Todo',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
-      initialRoute: '/',
+      home: AuthGate(),
       routes: {
-        '/': (context) => AuthGate(),
         '/home': (context) => HomeScreen(),
         '/login': (context) => LoginScreen(),
         '/register': (context) => RegisterScreen(),

@@ -1,5 +1,7 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../app/services/notification_service.dart';
 import '../../data/models/task.dart';
 import '../../providers/firestore_provider.dart';
 import 'package:uuid/uuid.dart';
@@ -40,6 +42,10 @@ class _TaskDialogState extends ConsumerState<TaskDialog> {
     _titleController.dispose();
     _descController.dispose();
     super.dispose();
+  }
+
+  int _getNotificationId(String taskId) {
+    return taskId.hashCode.abs(); // Hash the UUID string to get a unique integer ID
   }
 
   @override
@@ -142,6 +148,12 @@ class _TaskDialogState extends ConsumerState<TaskDialog> {
                       context: context,
                       initialTime:
                       _dueTime ?? TimeOfDay.fromDateTime(DateTime.now()),
+                      builder: (BuildContext context, Widget? child) {
+                        return MediaQuery(
+                          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+                          child: child!,
+                        );
+                      },
                     );
                     if (pickedTime != null) {
                       setState(() {
@@ -193,11 +205,56 @@ class _TaskDialogState extends ConsumerState<TaskDialog> {
               dueDate: finalDueDate,
             );
 
+            await NotificationService.cancelNotification(_getNotificationId(newTask.id));
+            debugPrint('Attempted to cancel existing notification for task ID: ${newTask.id}');
+
             if (widget.task == null) {
               await repo.addTask(newTask);
+              // await NotificationService.createNotification(
+              //   id: _getNotificationId(newTask.id),
+              //   title: 'Task Added: ${newTask.title}',
+              //   body: 'You have an upcoming task due',
+              //   payload: {'taskId': newTask.id}, // Pass task ID for deep linking
+              // );
             } else {
               await repo.updateTask(newTask);
+              // await NotificationService.createNotification(
+              //   id: _getNotificationId(newTask.id),
+              //   title: 'Task Updated: ${newTask.title}',
+              //   body: 'You have an upcoming task due!',
+              //   payload: {'taskId': newTask.id}, // Pass task ID for deep linking
+              // );
             }
+
+            // 3. Schedule a new notification if applicable
+            // Conditions for scheduling: not done, has a future due date
+            if (!newTask.isDone &&
+                newTask.dueDate != null &&
+                newTask.dueDate!.isAfter(DateTime.now())) {
+
+              final int intervalInSeconds = newTask.dueDate!.difference(DateTime.now()).inSeconds;
+
+              // Only schedule if the due date is genuinely in the future (positive interval)
+              if (intervalInSeconds > 0) {
+                await NotificationService.createNotification(
+                  id: _getNotificationId(newTask.id),
+                  title: 'Task Reminder: ${newTask.title}',
+                  body: 'You have an upcoming task due ${DateFormat('HH:mm').format(newTask.dueDate!)}!',
+                  payload: {'taskId': newTask.id}, // Pass task ID for deep linking
+                  scheduled: true,
+                  interval: Duration(seconds: intervalInSeconds),
+                );
+                debugPrint('Scheduled new notification for task ID: ${newTask.id} at ${newTask.dueDate}');
+              } else {
+                // Handle case where due date is now or in the past but the notification was intended to be scheduled
+                debugPrint('Due date is past or current, not scheduling new notification for task ID: ${newTask.id}');
+              }
+            } else {
+              // If the task is done, has no due date, or due date is in the past,
+              // ensure any lingering notification is cancelled (already done above, but for clarity)
+              debugPrint('Task is done, no due date, or due date is past. Notification cancelled (or not scheduled).');
+            }
+            // --- END Awesome Notifications Logic ---
 
             Navigator.pop(context);
           },

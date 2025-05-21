@@ -21,7 +21,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final tasksAsync = ref.watch(userTasksProvider);
     final userAsync = ref.watch(authStateProvider);
-    final firestoreProvider = ref.watch(firestoreRepositoryProvider);
+    //final firestoreProvider = ref.watch(firestoreRepositoryProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -57,15 +57,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               final task = shownTasks[i];
               return InkWell(
                 onTap: () => _showTaskDialog(task: task),
-                child: ListTile(
-                  title: Text(task.title),
-                  subtitle: task.dueDate != null
-                      ? Text(
-                      'Due: ${DateFormat('EEE, d MMM, HH:mm').format(task.dueDate!.toLocal())}')
-                      : null,
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: () => _deleteTask(task),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: ListTile(
+                    title: Text(task.title),
+                    subtitle: task.dueDate != null
+                        ? Text(
+                        'Due: ${DateFormat('EEE, d MMM, HH:mm').format(task.dueDate!.toLocal())}')
+                        : null,
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      onPressed: () => _deleteTask(task),
+                    ),
                   ),
                 ),
               );
