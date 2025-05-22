@@ -1,16 +1,8 @@
 # beyond_todo_app
 
-Todo App with Firebase and Awesome Notification
+Todo App with Firebase Auth, Firestore, and Awesome Notification
 
-## Getting Started
+## Demo Video
 
-This project is a starting point for a Flutter application.
+https://github.com/user-attachments/assets/0420e8a1-44c9-4014-b9a7-d69c80cf1657
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
